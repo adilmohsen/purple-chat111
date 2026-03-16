@@ -1,13 +1,13 @@
 import streamlit as st
 import json
 
-# 1. إعداد الصفحة
+# 1. إعداد الصفحة (ثابتة بالمنتصف)
 st.set_page_config(page_title="مطبخ مريوم", layout="centered")
 
-# 2. CSS: تثبيت الخط العريض وتوسيط الأزرار وتصغير الصورة
+# 2. CSS: قفل الإعدادات (الخط العريض، الأزرار المركزية، الصورة الصغيرة)
 st.markdown("""
 <style>
-    /* استدعاء خط Cairo العريض */
+    /* استدعاء خط Cairo العريض جداً */
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@900&display=swap');
     
     html, body, [data-testid="stAppViewContainer"] {
@@ -16,13 +16,12 @@ st.markdown("""
         direction: rtl;
     }
 
-    /* عنوان كبير وواضح */
     .main-title { 
         color: #db2777; text-align: center; font-size: 55px; 
         font-weight: 900; margin-bottom: 40px;
     }
 
-    /* الأزرار: كبيرة، واضحة، وفي منتصف الشاشة تماماً */
+    /* الأزرار: كبيرة، عريضة، وفي منتصف الشاشة تماماً */
     .stButton > button {
         width: 100%; height: 85px; font-size: 26px !important;
         background-color: #ffffff; color: #be185d;
@@ -34,10 +33,10 @@ st.markdown("""
         background-color: #f472b6; color: white;
     }
 
-    /* حجم الصورة: صغير ومرتب بوسط الكرت */
+    /* حجم الصورة: صغير ومرتب بوسط الكرت (300px) */
     .stImage img {
         border-radius: 20px;
-        width: 320px !important; 
+        width: 300px !important; 
         margin: 0 auto;
         display: block;
     }
@@ -55,7 +54,7 @@ if 'page' not in st.session_state: st.session_state.page = 'home'
 if st.session_state.page == 'home':
     st.markdown('<div class="main-title">🎀 مطبخ مريوم 🎀</div>', unsafe_allow_html=True)
     
-    # حصر الأزرار في عمود واحد مركزي لضمان عدم ميلانها
+    # ضمان بقاء الأزرار في المركز تماماً باستخدام عمود واحد محصور
     _, center_col, _ = st.columns([0.4, 2, 0.4])
     with center_col:
         if st.button("🍱 أطباق رئيسية"):
@@ -71,15 +70,17 @@ if st.session_state.page == 'home':
             st.session_state.page = 'filter'
             st.rerun()
 
-# --- صفحة النتائج ---
+# --- صفحة عرض الأكلات ---
 elif st.session_state.page == 'filter':
     if st.button("⬅️ رجوع"):
         st.session_state.page = 'home'
         st.rerun()
     
-    # مثال لعرض الصورة بحجمها الصغير الجديد
     st.markdown('<div class="recipe-card">', unsafe_allow_html=True)
     st.markdown('<h2 style="color:#db2777; font-weight:900;">كليجة تمر</h2>', unsafe_allow_html=True)
-    st.image("https://via.placeholder.com/300") # مكان الصورة
-    st.markdown('<p style="font-weight:900; font-size:20px;">الطريقة: عجينة محشوة بالتمر والهيل وتُشوى بالفرن.</p>', unsafe_allow_html=True)
+    
+    # الصورة هنا تطلع بالحجم الصغير اللي ثبتناه
+    st.image("https://via.placeholder.com/300") 
+    
+    st.markdown('<p style="font-weight:900; font-size:20px; color: #333;">الطريقة: عجينة محشوة بالتمر والهيل وتُشوى بالفرن.</p>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
