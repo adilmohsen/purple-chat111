@@ -1,105 +1,128 @@
 import streamlit as st
 import json
 
-# 1. إعدادات الصفحة
+# 1. إعدادات الصفحة الأساسية
 st.set_page_config(page_title="مطبخ مريوم", page_icon="🍲", layout="centered")
 
-# 2. تصميم CSS لجعل الصورة خلفية كاملة والأزرار مستطيلة فخمة
-st.markdown(f"""
+# 2. تصميم CSS لجعل الواجهة كلاسيكية ونظيفة مثل الصورة
+# جعلنا الخلفية نظيفة واستخدمنا حدوداً خفيفة وأنيقة للأزرار.
+page_style = """
 <style>
-[data-testid="stAppViewContainer"] {{
-    background-image: url("https://raw.githubusercontent.com/adilmohsen/purple-chat111/main/454fa9d2e598bae3df9c21c1ccf14889.jpg");
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-}}
+/* تعيين خلفية الموقع لتكون بيضاء ونظيفة */
+[data-testid="stAppViewContainer"] {
+    background-color: white;
+}
 
-/* تنسيق الأزرار المستطيلة الكبيرة */
-div.stButton > button {{
-    width: 100%;
-    height: 80px;
-    font-size: 24px !important;
-    font-weight: bold;
-    border-radius: 12px;
-    background-color: rgba(0, 0, 0, 0.5); /* تعتيم خلف الزر لبروزه */
-    color: white;
-    border: 2px solid rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(8px);
-    margin-bottom: 20px;
-}}
-
-div.stButton > button:hover {{
-    background-color: rgba(255, 255, 255, 0.2);
-    border-color: white;
-}}
-
-.recipe-card {{
-    background-color: rgba(0, 0, 0, 0.7);
-    padding: 20px;
-    border-radius: 15px;
-    color: white;
+/* تنسيق الكلام ليكون عربي ومن اليمين */
+.main {
     text-align: right;
     direction: rtl;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}}
+    color: black;
+}
+
+/* الأيقونات الكلاسيكية في الأعلى والأسفل */
+.header-icon {
+    width: 250px;
+    display: block;
+    margin: 20px auto 40px auto;
+}
+.footer-icon {
+    width: 200px;
+    display: block;
+    margin: 50px auto;
+}
+
+/* تنسيق الأزرار المستطيلة ليكون كلاسيكي وأنيق */
+div.stButton > button {
+    width: 100%;
+    height: 70px;
+    font-size: 22px !important;
+    font-weight: bold;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    background-color: transparent; /* خلفية شفافة */
+    color: #4a3e2a; /* لون بني داكن */
+    border: 2px solid #bda88a; /* إطار بيج كلاسيكي */
+    transition: 0.3s;
+}
+
+div.stButton > button:hover {
+    background-color: rgba(189, 168, 138, 0.1); /* تعتيم قليل */
+    border-color: #a08c72;
+    transform: scale(1.02);
+}
+
+/* حاوية الأكلات */
+.recipe-box {
+    background-color: rgba(243, 237, 230, 0.8); /* بيج شفاف جداً */
+    padding: 25px;
+    border-radius: 20px;
+    border: 1px solid rgba(189, 168, 138, 0.3); /* إطار شفاف جداً */
+    margin-top: 20px;
+    color: black;
+    direction: rtl;
+    text-align: right;
+}
+
+/* تنسيق العناوين داخل البطاقة */
+.recipe-title {
+    color: #4a3e2a;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
 </style>
-""", unsafe_allow_html=True)
+"""
+st.markdown(page_style, unsafe_allow_html=True)
 
-# 3. إدارة التنقل (Navigation)
-if 'page' not in st.session_state:
-    st.session_state.page = 'home'
-if 'category' not in st.session_state:
-    st.session_state.category = None
+# 3. الأيقونة الكلاسيكية العلوية (مثل الصورة)
+# استخدمنا صورة مماثلة لفكرة قبعة الطاهي والأدوات.
+st.image("https://images.fineartamerica.com/images/artworkimages/medium/1/chef-hat-spoons-vintage-wood-slice-print-v-2-cherie-w-fine-art-transparent.png", class="header-icon")
 
-# تحميل البيانات
+# 4. عنوان الموقع الكلاسيكي
+st.markdown('<h1 style="text-align: center; color: #4a3e2a; font-size: 40px; margin-bottom: 50px;">🍲 مطبخ مريوم الحلوة</h1>', unsafe_allow_html=True)
+
+# 5. تحميل بيانات الأكلات
 try:
     with open('recipes.json', 'r', encoding='utf-8') as f:
         recipes = json.load(f)
-except:
+except Exception as e:
+    st.error("أكو مشكلة بملف الـ JSON، تأكدي من رفعه بشكل صحيح مريوم.")
     recipes = []
 
-# --- الصفحة الرئيسية ---
-if st.session_state.page == 'home':
-    st.markdown("<h1 style='text-align:center; color:white; text-shadow: 2px 2px 4px #000;'>👨‍🍳 مطبخ مريوم الذكي</h1>", unsafe_allow_html=True)
-    
-    # تصحيح الخطأ: استخدمنا عمود واحد للأزرار المستطيلة
-    categories = ["اطباق رئيسية", "مقبلات", "خضروات", "حلويات"]
-    for cat in categories:
-        if st.button(f"📂 {cat}"):
-            st.session_state.category = cat
-            st.session_state.page = 'filter'
-            st.rerun()
+# 6. الأزرار الكبيرة في المنتصف
+btn_main = st.button("🍲 أطباق رئيسية")
+btn_dessert = st.button("🍰 حلويات")
+btn_side = st.button("🥗 مقبلات")
+btn_veggies = st.button("🥦 خضروات")
 
-# --- صفحة إدخال المكونات ---
-elif st.session_state.page == 'filter':
-    if st.button("⬅️ رجوع للرئيسية"):
-        st.session_state.page = 'home'
-        st.rerun()
-        
-    st.markdown(f"<div style='background-color:rgba(0,0,0,0.6); padding:10px; border-radius:10px;'><h2 style='text-align:right; color:white;'>شنو عندج مكونات للـ {st.session_state.category}؟</h2></div>", unsafe_allow_html=True)
+# 7. الأيقونة الكلاسيكية السفلية (مثل الصورة)
+# استخدمنا صورة مماثلة لفكرة البييض والحليب.
+st.image("https://images.fineartamerica.com/images/artworkimages/medium/1/baking-watercolor-transparent-cherie-w-fine-art.png", class="footer-icon")
+
+# 8. منطق العرض
+selected_cat = None
+if btn_main: selected_cat = "اطباق رئيسية"
+if btn_dessert: selected_cat = "حلويات"
+if btn_side: selected_cat = "مقبلات"
+if btn_veggies: selected_cat = "خضروات"
+
+if selected_cat:
+    st.markdown(f'<h2 style="color: #4a3e2a; text-align: right;">📋 قائمة {selected_cat}:</h2>', unsafe_allow_html=True)
     
-    cat_recipes = [r for r in recipes if r['category'] == st.session_state.category]
-    all_ing = sorted(list(set([ing for r in cat_recipes for ing in r['ingredients']])))
+    filtered = [r for r in recipes if r['category'] == selected_cat]
     
-    user_ing = st.multiselect("اختاري المكونات المتوفرة عندج:", all_ing)
-    
-    if st.button("اكتشفي الاقتراحات ✨"):
-        if user_ing:
-            found = False
-            for res in cat_recipes:
-                # اقتراح إذا توفر مكون واحد على الأقل
-                match = any(item in user_ing for item in res['ingredients'])
-                if match:
-                    found = True
-                    st.markdown(f"""
-                    <div class="recipe-card">
-                        <h2 style="color: #f1c40f;">{res['name']}</h2>
-                        <p>💰 <b>التكلفة:</b> {res['cost']}</p>
-                        <p>📝 <b>الطريقة:</b> {res['recipe']}</p>
-                    </div>
-                    """, unsafe_allow_html=True)
-                    st.image(res['image'], use_container_width=True)
-            if not found:
-                st.warning("ماكو أكلة بهالمكونات بهذا القسم حالياً.")
-        else:
-            st.info("رجاءً اختاري مكونات أولاً.")
+    if filtered:
+        for res in filtered:
+            with st.container():
+                st.markdown(f"""
+                <div class="recipe-box">
+                    <h2 class="recipe-title">✨ {res['name']}</h2>
+                    <p style="font-size: 18px; color: black;">💰 <b>التكلفة:</b> {res['cost']}</p>
+                    <p style="font-size: 18px; color: black;">📖 <b>طريقة التحضير:</b><br>{res['recipe']}</p>
+                </div>
+                """, unsafe_allow_html=True)
+                # التأكد من استخدام الصور العراقية من ملف الـ JSON
+                st.image(res['image'], use_container_width=True)
+                st.write("---")
+    else:
+        st.info("هذا القسم حالياً فارغ، ضيفي أكلات بملف الـ JSON حتى تظهر هنا.")
