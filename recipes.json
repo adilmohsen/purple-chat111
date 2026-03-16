@@ -1,98 +1,82 @@
-import streamlit as st
-import json
-
-# 1. إعدادات الصفحة
-st.set_page_config(page_title="مطبخ مريوم", layout="centered")
-
-# 2. تصميم CSS (الخلفية والأزرار الموزعة والخطوط)
-st.markdown(f"""
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap');
-
-    [data-testid="stAppViewContainer"] {{
-        background-image: url("https://raw.githubusercontent.com/adilmohsen/purple-chat111/main/454fa9d2e598bae3df9c21c1ccf14889.jpg");
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
-    }}
-    
-    .main {{ text-align: center; direction: rtl; }}
-    h1, h2, h3, p {{ font-family: 'Cairo', sans-serif !important; color: white !important; text-shadow: 2px 2px 4px #000; }}
-
-    /* تنسيق الأزرار لتكون 2 في كل سطر */
-    div.stButton > button {{
-        width: 100%;
-        height: 70px;
-        font-size: 20px !important;
-        border-radius: 15px;
-        background-color: rgba(0, 0, 0, 0.6);
-        color: white;
-        border: 2px solid #f39c12;
-    }}
-    
-    .recipe-card {{
-        background-color: rgba(0, 0, 0, 0.8);
-        padding: 20px;
-        border-radius: 20px;
-        border: 1px solid #f39c12;
-        margin-bottom: 20px;
-    }}
-</style>
-""", unsafe_allow_html=True)
-
-if 'page' not in st.session_state: st.session_state.page = 'home'
-if 'category' not in st.session_state: st.session_state.category = None
-
-# تحميل البيانات
-try:
-    with open('recipes.json', 'r', encoding='utf-8') as f:
-        recipes = json.load(f)
-except: recipes = []
-
-# --- الصفحة الرئيسية ---
-if st.session_state.page == 'home':
-    st.markdown("<h1 style='font-size: 50px;'>🍲 مطبخ مريوم</h1>", unsafe_allow_html=True)
-    
-    # توزيع الأزرار 2 بجهة و 2 بجهة
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("🥘 أطباق رئيسية"):
-            st.session_state.category, st.session_state.page = "اطباق رئيسية", 'filter'
-            st.rerun()
-        if st.button("🥗 مقبلات"):
-            st.session_state.category, st.session_state.page = "مقبلات", 'filter'
-            st.rerun()
-    with col2:
-        if st.button("🍰 حلويات"):
-            st.session_state.category, st.session_state.page = "حلويات", 'filter'
-            st.rerun()
-        if st.button("🥦 خضروات"):
-            st.session_state.category, st.session_state.page = "خضروات", 'filter'
-            st.rerun()
-
-# --- صفحة الفلترة ---
-elif st.session_state.page == 'filter':
-    if st.button("⬅️ رجوع"):
-        st.session_state.page = 'home'
-        st.rerun()
-        
-    st.markdown(f"## شنو عندج مواد للـ {st.session_state.category}؟")
-    
-    cat_recipes = [r for r in recipes if r['category'] == st.session_state.category]
-    all_ing = sorted(list(set([i for r in cat_recipes for i in r['ingredients']])))
-    user_ing = st.multiselect("اختاري المواد:", all_ing)
-    
-    if st.button("اكتشفي الأكلات ✨"):
-        found = False
-        for res in cat_recipes:
-            # اقتراح إذا توفر أي مكون من اللي اختارته مريوم
-            if any(item in user_ing for item in res['ingredients']):
-                found = True
-                st.markdown(f"""<div class="recipe-card">
-                    <h2 style='color:#f39c12 !important;'>{res['name']}</h2>
-                    <p>💰 التكلفة: {res['cost']}</p>
-                    <p>📖 الطريقة: {res['recipe']}</p>
-                </div>""", unsafe_allow_html=True)
-                st.image(res['image'], use_container_width=True)
-        if not found:
-            st.warning("حاولي تختارين مواد أكثر مريوم!")
+[
+    {
+        "name": "دولمة عراقية",
+        "category": "اطباق رئيسية",
+        "ingredients": ["سلق", "بصل", "باذنجان", "تمن", "لحم", "طماطم", "معجون"],
+        "cost": "متوسطة",
+        "recipe": "نحشي الخضروات بخلطة التمن واللحم والبهارات، ونطبخها على نار هادئة.",
+        "image": "https://raw.githubusercontent.com/adilmohsen/purple-chat111/main/454fa9d2e598bae3df9c21c1ccf14889.jpg"
+    },
+    {
+        "name": "برياني دجاج",
+        "category": "اطباق رئيسية",
+        "ingredients": ["دجاج", "تمن", "بزاليا", "بطاطا", "جزر", "لوز", "كشمش"],
+        "cost": "متوسطة",
+        "recipe": "يطبخ التمن مع البهارات ويضاف له الحشو والدجاج المحمر.",
+        "image": "https://images.deliveryhero.io/image/talabat/Menuitems/637841108257017210.jpg"
+    },
+    {
+        "name": "سمك مسكوف",
+        "category": "اطباق رئيسية",
+        "ingredients": ["سمك", "خل", "ثوم", "طماطم"],
+        "cost": "مرتفعة",
+        "recipe": "يشوى السمك على الحطب أو بالفرن مع تتبيلة الثوم والخل.",
+        "image": "https://i.ytimg.com/vi/qS8v-2oD1yE/maxresdefault.jpg"
+    },
+    {
+        "name": "كليجة تمر",
+        "category": "حلويات",
+        "ingredients": ["طحين", "تمر", "دهن", "هيل"],
+        "cost": "رخيصة",
+        "recipe": "عجينة محشوة بالتمر والهيل وتشوى بالفرن.",
+        "image": "https://i.ytimg.com/vi/u6C8eM_V5pI/maxresdefault.jpg"
+    },
+    {
+        "name": "باذنجانية",
+        "category": "مقبلات",
+        "ingredients": ["باذنجان", "فلفل", "خيار", "طماطم", "كاتشب"],
+        "cost": "رخيصة",
+        "recipe": "خلطة خضروات مقطعة مع باذنجان مقلي وصلصة حامض حلو.",
+        "image": "https://i.ytimg.com/vi/R7j87KWhx20/maxresdefault.jpg"
+    },
+    {
+        "name": "تبسي باذنجان",
+        "category": "خضروات",
+        "ingredients": ["باذنجان", "بطاطا", "طماطم", "لحم مفروم"],
+        "cost": "متوسطة",
+        "recipe": "ترتب الخضروات المقلية في صينية وتطبخ بالفرن مع صلصة الطماطم.",
+        "image": "https://kitchen.sayidaty.net/uploads/small/60/6007ec4d7c00e6c5332f913d09a0684f_4.jpg"
+    },
+    {
+        "name": "مخلمة لحم",
+        "category": "اطباق رئيسية",
+        "ingredients": ["لحم مفروم", "بيض", "بصل"],
+        "cost": "رخيصة",
+        "recipe": "يحمس اللحم مع البصل ثم يضاف البيض حتى ينضج.",
+        "image": "https://i.ytimg.com/vi/W9pXUe6wzYw/maxresdefault.jpg"
+    },
+    {
+        "name": "جاجيك",
+        "category": "مقبلات",
+        "ingredients": ["لبن", "خيار", "نعناع"],
+        "cost": "رخيصة جداً",
+        "recipe": "يخلط اللبن مع الخيار المقطع والنعناع المجفف.",
+        "image": "https://modo3.com/thumbs/fit630x300/157978/1487680077/%D8%B7%D8%B1%D9%8A%D9%82%D8%A9_%D8%B9%D9%85%D9%84_%D8%AC%D8%A7%D8%AC%D9%8A%D9%83_%D8%B9%D8%B1%D8%A7%D9%82%D9%8A.jpg"
+    },
+    {
+        "name": "حلاوة حليب",
+        "category": "حلويات",
+        "ingredients": ["حليب", "طحين", "سكر", "زبدة"],
+        "cost": "رخيصة",
+        "recipe": "يحمص الحليب والطحين بالزبدة ويضاف له الشيرة.",
+        "image": "https://i.ytimg.com/vi/W69BndvB7I0/maxresdefault.jpg"
+    },
+    {
+        "name": "تشريب دجاج",
+        "category": "اطباق رئيسية",
+        "ingredients": ["دجاج", "خبز", "بصل", "كركم"],
+        "cost": "متوسطة",
+        "recipe": "يسلق الدجاج مع البصل والبهارات ويقدم فوق خبز منقع بالمرق.",
+        "image": "https://kitchen.sayidaty.net/uploads/small/54/54728f3226f95f492a83457574768407_4.jpg"
+    }
+]
