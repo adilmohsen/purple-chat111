@@ -1,116 +1,106 @@
 import streamlit as st
 import json
 
-# 1. إعدادات الصفحة الأساسية
-st.set_page_config(page_title="مطبخ مريوم الذكي", page_icon="🍲", layout="centered")
+# 1. إعدادات الصفحة
+st.set_page_config(page_title="مطبخ مريوم", page_icon="🍲", layout="centered")
 
-# 2. إضافة الخلفية الخشبية الأصلية وتنسيق الأزرار لتكون شفافة وأنيقة
-# قمنا بجعل العناصر أكثر شفافية وكلاسيكية لكي تظهر تفاصيل الخلفية الخشبية.
-page_style = """
+# 2. تصميم CSS لجعل الصورة خلفية كاملة والأزرار مستطيلة فخمة
+st.markdown(f"""
 <style>
-/* تعيين الخلفية الخشبية الأصلية للموقع بالكامل */
-[data-testid="stAppViewContainer"] {
+[data-testid="stAppViewContainer"] {{
     background-image: url("https://raw.githubusercontent.com/adilmohsen/purple-chat111/main/454fa9d2e598bae3df9c21c1ccf14889.jpg");
     background-size: cover;
-    background-attachment: fixed;
     background-position: center;
-}
+    background-attachment: fixed;
+}}
 
-/* تنسيق الكلام ليكون عربي ومن اليمين */
-.main {
-    text-align: right;
-    direction: rtl;
-    color: white;
-}
-
-/* تنسيق الأزرار الكبيرة لتكون شفافة وأنيقة */
-div.stButton > button {
+/* تنسيق الأزرار المستطيلة الكبيرة */
+div.stButton > button {{
     width: 100%;
-    height: 100px;
-    font-size: 28px !important;
+    height: 80px;
+    font-size: 24px !important;
     font-weight: bold;
-    border-radius: 20px;
-    margin-bottom: 15px;
-    background-color: rgba(0, 0, 0, 0.4); /* أسود شفاف جداً */
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.1);
     color: white;
-    border: 2px solid rgba(255, 255, 255, 0.5); /* إطار أبيض شفاف */
-    transition: 0.3s;
-}
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(5px);
+    margin-bottom: 20px;
+}}
 
-div.stButton > button:hover {
-    background-color: rgba(0, 0, 0, 0.6); /* تعتيم قليل عند التمرير */
-    border-color: rgba(255, 255, 255, 0.8);
-    transform: scale(1.02);
-}
+div.stButton > button:hover {{
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: white;
+}}
 
-/* حاوية الأكلات (البطاقة) لتكون شفافة */
-.recipe-box {
-    background-color: rgba(0, 0, 0, 0.6); /* أسود شفاف */
-    padding: 25px;
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.3); /* إطار شفاف جداً */
-    margin-top: 20px;
+/* صناديق عرض الوصفات */
+.recipe-card {{
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 15px;
     color: white;
-    direction: rtl;
     text-align: right;
-}
-
-/* تنسيق العناوين داخل البطاقة */
-.recipe-title {
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 24px;
-    margin-bottom: 10px;
-}
+    direction: rtl;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}}
 </style>
-"""
-st.markdown(page_style, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
-# 3. عنوان الموقع بلون كلاسيكي
-st.markdown('<h1 style="text-align: center; color: white; font-size: 50px;">🍲 مطبخ مريوم الحلوة</h1>', unsafe_allow_html=True)
-st.markdown('<p style="text-align: center; color: rgba(255, 255, 255, 0.8); font-size: 20px;">اختاري الصنف وشوفي أطيب الأكلات العراقية</p>', unsafe_allow_html=True)
+# 3. إدارة التنقل بين الصفحات (Navigation)
+if 'page' not in st.session_state:
+    st.session_state.page = 'home'
+if 'category' not in st.session_state:
+    st.session_state.category = None
 
-# 4. تحميل بيانات الأكلات
-try:
-    with open('recipes.json', 'r', encoding='utf-8') as f:
-        recipes = json.load(f)
-except Exception as e:
-    st.error("أكو مشكلة بملف الـ JSON، تأكدي من رفعه بشكل صحيح مريوم.")
-    recipes = []
+# تحميل البيانات
+with open('recipes.json', 'r', encoding='utf-8') as f:
+    recipes = json.load(f)
 
-# 5. توزيع الأزرار الكبيرة
-col1, col2 = st.columns(2)
-
-with col1:
-    btn_main = st.button("🍲 أطباق رئيسية")
-    btn_dessert = st.button("🍰 حلويات")
-
-with col2:
-    btn_side = st.button("🥗 مقبلات")
-    btn_veggies = st.button("🥦 خضروات")
-
-# 6. منطق العرض
-selected_cat = None
-if btn_main: selected_cat = "اطباق رئيسية"
-if btn_dessert: selected_cat = "حلويات"
-if btn_side: selected_cat = "مقبلات"
-if btn_veggies: selected_cat = "خضروات"
-
-if selected_cat:
-    st.markdown(f'<h2 style="color: white; text-align: right;">📋 قائمة {selected_cat}:</h2>', unsafe_allow_html=True)
+# --- الصفحة الرئيسية ---
+if st.session_state.page == 'home':
+    st.markdown("<h1 style='text-align:center; color:white; padding:20px;'>👨‍🍳 مطبخ مريوم الذكي</h1>", unsafe_allow_html=True)
     
-    filtered = [r for r in recipes if r['category'] == selected_cat]
+    col1, col2 = st.columns(1) # جعل الأزرار مستطيلة كاملة العرض
     
-    if filtered:
-        for res in filtered:
-            with st.container():
-                st.markdown(f"""
-                <div class="recipe-box">
-                    <h2 class="recipe-title">✨ {res['name']}</h2>
-                    <p style="font-size: 18px;">💰 <b>التكلفة:</b> {res['cost']}</p>
-                    <p style="font-size: 18px;">📖 <b>طريقة التحضير:</b><br>{res['recipe']}</p>
-                </div>
-                """, unsafe_allow_html=True)
-                st.image(res['image'], use_container_width=True)
-                st.write("---")
-    else:
-        st.info("هذا القسم حالياً فارغ، ضيفي أكلات بملف الـ JSON حتى تظهر هنا.")
+    categories = ["اطباق رئيسية", "مقبلات", "خضروات", "حلويات"]
+    for cat in categories:
+        if st.button(f"📂 {cat}"):
+            st.session_state.category = cat
+            st.session_state.page = 'filter'
+            st.rerun()
+
+# --- صفحة إدخال المكونات ---
+elif st.session_state.page == 'filter':
+    if st.button("⬅️ رجوع للرئيسية"):
+        st.session_state.page = 'home'
+        st.rerun()
+        
+    st.markdown(f"<h2 style='text-align:right; color:white;'>شنو عندج مكونات للـ {st.session_state.category}؟</h2>", unsafe_allow_html=True)
+    
+    # استخراج المكونات الخاصة بهذا القسم فقط
+    cat_recipes = [r for r in recipes if r['category'] == st.session_state.category]
+    all_ing = sorted(list(set([ing for r in cat_recipes for ing in r['ingredients']])))
+    
+    user_ing = st.multiselect("اختاري المكونات:", all_ing)
+    
+    if st.button("اكتشفي الاقتراحات ✨"):
+        if user_ing:
+            st.write("---")
+            found = False
+            for res in cat_recipes:
+                # التحقق إذا كانت المكونات المختارة موجودة في الأكلة
+                match = any(item in user_ing for item in res['ingredients'])
+                if match:
+                    found = True
+                    st.markdown(f"""
+                    <div class="recipe-card">
+                        <h2 style="color: #f1c40f;">{res['name']}</h2>
+                        <p>💰 <b>التكلفة:</b> {res['cost']}</p>
+                        <p>📝 <b>الطريقة:</b> {res['recipe']}</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    st.image(res['image'], use_container_width=True)
+            if not found:
+                st.warning("ماكو أكلة بهالمكونات بهذا القسم حالياً.")
+        else:
+            st.info("رجاءً اختاري مكونات أولاً.")
