@@ -1,71 +1,52 @@
 import streamlit as st
+import json
+import os
 
 # إعدادات الصفحة
-st.set_page_config(page_title="محادثة بنون الحلوة", page_icon="💜")
+st.set_page_config(page_title="مخطط الوجبات الذكي", page_icon="🍲", layout="centered")
 
-# التنسيق البنفسجي (CSS)
-st.markdown(f"""
+# تنسيق CSS لجعل الكلام من اليمين لليسار (للغة العربية) ولون خلفية أنيق
+st.markdown("""
     <style>
-    /* تغيير الخلفية للون بنفسجي فاتح أو صورة بنفسجية */
-    [data-testid="stAppViewContainer"] {{
-        background-color: #f3e5f5; 
-        background-image: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
-    }}
-    
-    /* تنسيق أزرار البنفسجي */
-    .stButton>button {{
-        background-color: #9c27b0 !important;
-        color: white !important;
-        border-radius: 20px !important;
-    }}
-    
-    /* تنسيق نص العنوان */
-    h1 {{
-        color: #7b1fa2 !important;
-        text-align: center;
-    }}
+    .stApp { text-align: right; direction: rtl; }
+    div[data-baseweb="select"] { direction: rtl; }
     </style>
     """, unsafe_allow_html=True)
 
-# المخزن المشترك (الذاكرة المشتركة للكل)
-@st.cache_resource
-def get_global_messages():
-    return []
+st.title("👨‍🍳 مخطط الوجبات الذكي")
+st.subheader("مريوم، شنو عندج مكونات بالثلاجة؟")
 
-all_msgs = get_global_messages()
+# التأكد من وجود ملف البيانات أو إنشاء بيانات تجريبية إذا نقص
+if not os.path.exists('recipes.json'):
+    default_recipes = [
+        {"name": "مخلمة بيض وطماطم", "ingredients": ["بيض", "طماطم", "بصل"], "cost": "رخيص"},
+        {"name": "مجدرة رز وعدس", "ingredients": ["رز", "عدس", "بصل"], "cost": "رخيص"},
+        {"name": "معكرونة بالصلصة", "ingredients": ["معكرونة", "طماطم", "ثوم"], "cost": "رخيص"}
+    ]
+    with open('recipes.json', 'w', encoding='utf-8') as f:
+        json.dump(default_recipes, f, ensure_ascii=False)
 
-# --- شاشة تسجيل الدخول ---
-if "user_name" not in st.session_state:
-    st.title("💜 أهلاً بيكم بچات بنون الحلوة")
-    name_input = st.text_input("لطفاً، ادخل اسمك المستعار:")
-    if st.button("دخول للدردشة"):
-        if name_input:
-            st.session_state.user_name = name_input
-            st.rerun()
+# تحميل البيانات
+with open('recipes.json', 'r', encoding='utf-8') as f:
+    recipes = json.load(f)
+
+# استخراج قائمة المكونات
+all_ing = sorted(list(set([ing for res in recipes for ing in res['ingredients']])))
+
+# واجهة الاختيار
+selected_items = st.multiselect("اختاري المكونات المتوفرة حالياً:", all_ing)
+
+if st.button("اكتشفي الأكلات الممكنة"):
+    if selected_items:
+        results = [r for r in recipes if all(item in selected_items for item in r['ingredients'])]
+        
+        if results:
+            st.success(f"لقينا لج {len(results)} وجبات تكدرين تسويها!")
+            for res in results:
+                with st.expander(f"🍴 {res['name']}"):
+                    st.write(f"✅ **المكونات:** {', '.join(res['ingredients'])}")
+                    st.write(f"💰 **التكلفة التقديرية:** {res['cost']}")
         else:
-            st.error("الاسم مطلوب للدخول!")
-    st.stop()
-
-# --- واجهة الچات بعد تسجيل الدخول ---
-
-# القائمة الجانبية
-st.sidebar.title(f"المستخدم: {st.session_state.user_name} ✨")
-if st.sidebar.button("مسح السجل 🗑️"):
-    all_msgs.clear()
-    st.rerun()
-
-if st.sidebar.button("خروج ⬅️"):
-    del st.session_state.user_name
-    st.rerun()
-
-st.title("💜 بنون الحلوة ✨")
-
-# عرض الرسائل
-for chat in all_msgs:
-    with st.chat_message("user"):
-        st.write(f"**{chat['name']}:** {chat['msg']}")
-
-# صندوق الكتابة
-if prompt := st.chat_input("اكتب رسالتك هنا..."):
-    all_msgs.append({"name": st.session_state.user_name, "msg": prompt})
-    st.rerun()
+            st.warning("ماكو وجبة مطابقة تماماً، جربي تضيفين مكونات أكثر.")
+    else:
+        st.info("حطي المكونات أولاً مريوم.")
