@@ -21,10 +21,10 @@ div.stButton > button {{
     font-size: 24px !important;
     font-weight: bold;
     border-radius: 12px;
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(0, 0, 0, 0.5); /* تعتيم خلف الزر لبروزه */
     color: white;
     border: 2px solid rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(8px);
     margin-bottom: 20px;
 }}
 
@@ -33,7 +33,6 @@ div.stButton > button:hover {{
     border-color: white;
 }}
 
-/* صناديق عرض الوصفات */
 .recipe-card {{
     background-color: rgba(0, 0, 0, 0.7);
     padding: 20px;
@@ -46,22 +45,24 @@ div.stButton > button:hover {{
 </style>
 """, unsafe_allow_html=True)
 
-# 3. إدارة التنقل بين الصفحات (Navigation)
+# 3. إدارة التنقل (Navigation)
 if 'page' not in st.session_state:
     st.session_state.page = 'home'
 if 'category' not in st.session_state:
     st.session_state.category = None
 
 # تحميل البيانات
-with open('recipes.json', 'r', encoding='utf-8') as f:
-    recipes = json.load(f)
+try:
+    with open('recipes.json', 'r', encoding='utf-8') as f:
+        recipes = json.load(f)
+except:
+    recipes = []
 
 # --- الصفحة الرئيسية ---
 if st.session_state.page == 'home':
-    st.markdown("<h1 style='text-align:center; color:white; padding:20px;'>👨‍🍳 مطبخ مريوم الذكي</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align:center; color:white; text-shadow: 2px 2px 4px #000;'>👨‍🍳 مطبخ مريوم الذكي</h1>", unsafe_allow_html=True)
     
-    col1, col2 = st.columns(1) # جعل الأزرار مستطيلة كاملة العرض
-    
+    # تصحيح الخطأ: استخدمنا عمود واحد للأزرار المستطيلة
     categories = ["اطباق رئيسية", "مقبلات", "خضروات", "حلويات"]
     for cat in categories:
         if st.button(f"📂 {cat}"):
@@ -75,20 +76,18 @@ elif st.session_state.page == 'filter':
         st.session_state.page = 'home'
         st.rerun()
         
-    st.markdown(f"<h2 style='text-align:right; color:white;'>شنو عندج مكونات للـ {st.session_state.category}؟</h2>", unsafe_allow_html=True)
+    st.markdown(f"<div style='background-color:rgba(0,0,0,0.6); padding:10px; border-radius:10px;'><h2 style='text-align:right; color:white;'>شنو عندج مكونات للـ {st.session_state.category}؟</h2></div>", unsafe_allow_html=True)
     
-    # استخراج المكونات الخاصة بهذا القسم فقط
     cat_recipes = [r for r in recipes if r['category'] == st.session_state.category]
     all_ing = sorted(list(set([ing for r in cat_recipes for ing in r['ingredients']])))
     
-    user_ing = st.multiselect("اختاري المكونات:", all_ing)
+    user_ing = st.multiselect("اختاري المكونات المتوفرة عندج:", all_ing)
     
     if st.button("اكتشفي الاقتراحات ✨"):
         if user_ing:
-            st.write("---")
             found = False
             for res in cat_recipes:
-                # التحقق إذا كانت المكونات المختارة موجودة في الأكلة
+                # اقتراح إذا توفر مكون واحد على الأقل
                 match = any(item in user_ing for item in res['ingredients'])
                 if match:
                     found = True
