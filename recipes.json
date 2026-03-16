@@ -2,89 +2,33 @@
     {
         "name": "دولمة عراقية",
         "category": "اطباق رئيسية",
-        "ingredients": ["سلق", "بصل", "باذنجان", "لحم مفروم", "رز", "تمن"],
+        "ingredients": ["سلق", "بصل", "لحم", "تمن"],
         "cost": "متوسط",
-        "recipe": "نحضر الحشوة من الرز واللحم والبهارات، نحشي الخضروات ونصفها في القدر، ثم نضيف ماء المعجون ونتركها تنضج على نار هادئة.",
-        "image": "https://i.ytimg.com/vi/q442N6yNq4E/maxresdefault.jpg"
+        "recipe": "نحشي الخضروات بخلطة التمن واللحم والبهارات ونطبخها بماء المعجون.",
+        "image": "https://img.etimg.com/thumb/msid-93111003,width-1200,height-900,resizemode-4,imgsize-103364/dolma.jpg"
     },
     {
         "name": "برياني دجاج",
         "category": "اطباق رئيسية",
-        "ingredients": ["رز", "دجاج", "بزاليا", "بطاطا", "شعرية"],
+        "ingredients": ["دجاج", "تمن", "بزاليا", "لوز"],
         "cost": "متوسط",
-        "recipe": "نسلق الدجاج ونقلي البطاطا والبزاليا، نطبخ التمن مع البهارات ونخلط المكونات كلها مع الشعرية المحموسة.",
-        "image": "https://i.ytimg.com/vi/R7oRjH_vM2c/maxresdefault.jpg"
-    },
-    {
-        "name": "كبة حلب (رز)",
-        "category": "اطباق رئيسية",
-        "ingredients": ["رز", "لحم مفروم", "بصل"],
-        "cost": "رخيص",
-        "recipe": "نسلق الرز حتى يعجن، نعجنه جيداً، نحشيه باللحم المفروم والبصل المحموس، ثم نقليها بالزيت.",
-        "image": "https://i.ytimg.com/vi/mI6IidH-R_E/maxresdefault.jpg"
-    },
-    {
-        "name": "تشريب لحم (باميا)",
-        "category": "اطباق رئيسية",
-        "ingredients": ["لحم", "باميا", "طماطم", "ثوم"],
-        "cost": "متوسط",
-        "recipe": "نسلق اللحم، نحمس الباميا والثوم، نضيف عصير الطماطم واللحم ونتركها تتسبك، وتقدم مع خبز التنور.",
-        "image": "https://i.ytimg.com/vi/6fR02hM3I08/maxresdefault.jpg"
-    },
-    {
-        "name": "سمك مسقوف",
-        "category": "اطباق رئيسية",
-        "ingredients": ["سمك", "ملح", "خل", "بصل"],
-        "cost": "غالي",
-        "recipe": "نفتح السمكة ونملحها، نشويها على الحطب أو في الفرن مع تتبيلة الخل والبصل والطماطم.",
-        "image": "https://i.ytimg.com/vi/22qH5e_p8x0/maxresdefault.jpg"
-    },
-    {
-        "name": "قوزي عراقي",
-        "category": "اطباق رئيسية",
-        "ingredients": ["لحم غنم", "رز", "مكسرات", "بهارات"],
-        "cost": "غالي",
-        "recipe": "نسلق اللحم ببطء حتى يذوب، نطبخ الرز بالزعفران، ونزين الصحن باللحم والمكسرات المحموسة.",
-        "image": "https://i.ytimg.com/vi/h2uP9LhBf_s/maxresdefault.jpg"
-    },
-    {
-        "name": "سلطة تراثية (ناعم)",
-        "category": "خضروات",
-        "ingredients": ["خيار", "طماطم", "بصل", "بقدونس", "ليمون"],
-        "cost": "رخيص جداً",
-        "recipe": "نقطع الخضروات لقطع صغيرة جداً، نخلطها مع الملح والليمون وزيت الزيتون.",
-        "image": "https://i.ytimg.com/vi/IeG0zI1yDqY/maxresdefault.jpg"
-    },
-    {
-        "name": "جاجيك عراقي",
-        "category": "مقبلات",
-        "ingredients": ["لبن", "خيار", "ثوم", "نعناع"],
-        "cost": "رخيص",
-        "recipe": "نبرش الخيار ونخلطه مع اللبن والثوم المهروس والنعناع المجفف.",
-        "image": "https://i.ytimg.com/vi/1_0XN0Xw3pE/maxresdefault.jpg"
+        "recipe": "تمن مطبوخ مع بهارات البرياني وقطع الدجاج والمكسرات.",
+        "image": "https://images.deliveryhero.io/image/talabat/Menuitems/637841108257017210.jpg"
     },
     {
         "name": "كليجة عراقية",
         "category": "حلويات",
-        "ingredients": ["طحين", "تمر", "هيل", "دهن حر"],
-        "cost": "متوسط",
-        "recipe": "نعجن الطحين مع الدهن، نحشيه بالتمر المطيب بالهيل، ونشويها بالفرن.",
-        "image": "https://i.ytimg.com/vi/KshO_9oDk9k/maxresdefault.jpg"
-    },
-    {
-        "name": "حلاوة دهينة",
-        "category": "حلويات",
-        "ingredients": ["طحين", "سكر", "دبس", "جوز هند"],
-        "cost": "متوسط",
-        "recipe": "نخلط المكونات ونطبخها بالفرن مع كمية وفيرة من الدهن حتى تكتسب اللون البني.",
-        "image": "https://i.ytimg.com/vi/v0uJ26_G6x4/maxresdefault.jpg"
-    },
-    {
-        "name": "زردة وحليب",
-        "category": "حلويات",
-        "ingredients": ["رز", "سكر", "حليب", "صبغة لوز"],
+        "ingredients": ["طحين", "تمر", "دهن", "هيل"],
         "cost": "رخيص",
-        "recipe": "نطبخ الرز حتى يذوب تماماً، نقسمه لجزئين: جزء بالحليب وجزء بالزعفران (الصبغة) ونصبهم في المواعين.",
-        "image": "https://i.ytimg.com/vi/OqC9j9U85o0/maxresdefault.jpg"
+        "recipe": "عجينة محشوة بالتمر أو الجوز ومشوية بالفرن.",
+        "image": "https://kitchen.sayidaty.net/uploads/small/70/709291f09c003290b213c4c9d57a4192_4.jpg"
+    },
+    {
+        "name": "جاجيك",
+        "category": "مقبلات",
+        "ingredients": ["لبن", "خيار", "ثوم"],
+        "cost": "رخيص جداً",
+        "recipe": "خلط اللبن مع الخيار المبروش والثوم والنعناع.",
+        "image": "https://modo3.com/thumbs/fit630x300/157978/1487680077/%D8%B7%D8%B1%D9%8A%D9%82%D8%A9_%D8%B9%D9%85%D9%84_%D8%AC%D8%A7%D8%AC%D9%8A%D9%83_%D8%B9%D8%B1%D8%A7%D9%82%D9%8A.jpg"
     }
 ]
