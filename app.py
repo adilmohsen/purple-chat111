@@ -1,65 +1,62 @@
 import streamlit as st
 import json
 
-# 1. إعداد الصفحة بشكل كامل
+# 1. إعداد الصفحة
 st.set_page_config(page_title="مطبخ مريوم", layout="wide")
 
-# 2. تصميم CSS (خط Cairo، ألوان سمائي ووردي، خلفية ثابتة)
+# 2. CSS المتطور: ألوان متناسقة، خط Cairo، وترتيب أزرار احترافي
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@600;900&display=swap');
     
     html, body, [data-testid="stAppViewContainer"] {
         font-family: 'Cairo', sans-serif;
-        background-color: #f0f8ff; /* لون سمائي فاتح جداً للخلفية */
+        background-color: #fdf2f8; /* خلفية وردية هادئة جداً */
         direction: rtl;
     }
 
-    /* العنوان الرئيسي بتصميم وردي وذهبي */
     .main-title { 
-        color: #ff69b4; text-align: center; font-size: 65px; font-weight: 900; 
-        text-shadow: 2px 2px 5px rgba(0,0,0,0.1); margin-top: 30px;
+        color: #db2777; text-align: center; font-size: 55px; font-weight: 900; 
+        margin-top: 20px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
     }
 
-    /* تنسيق الأزرار (سمائي مع حواف وردية) */
+    /* تنسيق الأزرار بشكل متناسق في منتصف الشاشة */
     .stButton > button {
-        width: 100%; height: 85px; font-size: 24px !important;
-        background-color: #87ceeb; color: white;
-        border: 3px solid #ffb6c1; border-radius: 20px;
-        transition: 0.3s; font-weight: bold;
+        width: 100%; height: 100px; font-size: 24px !important;
+        background-color: #ffffff; color: #be185d;
+        border: 2px solid #fbcfe8; border-radius: 30px;
+        box-shadow: 0 4px 15px rgba(219, 39, 119, 0.1);
+        transition: 0.3s all ease; font-weight: 900;
     }
     .stButton > button:hover {
-        background-color: #ffb6c1; color: white; transform: scale(1.02);
+        background-color: #f472b6; color: white; transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(219, 39, 119, 0.2);
     }
 
-    /* كروت النتائج (تصميم نظيف بلمسة وردية) */
+    /* كرت النصائح الذكي */
+    .advice-box {
+        background: #fff1f2; border-right: 10px solid #fb7185;
+        padding: 20px; border-radius: 20px; color: #9f1239;
+        font-size: 20px; line-height: 1.6; margin: 20px 0;
+    }
+
+    /* كرت الأكلة */
     .recipe-card {
-        background-color: white; padding: 35px;
-        border-radius: 25px; border-right: 15px solid #ff69b4;
-        margin-bottom: 35px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-    }
-    
-    .recipe-title { color: #4682b4; font-size: 40px; font-weight: 900; text-align: center; }
-    
-    /* شريط البدائل */
-    .suggestion-box {
-        background: #e0f7fa; border-right: 8px solid #00acc1;
-        padding: 15px; border-radius: 12px; color: #00838f;
-        font-weight: bold; font-size: 20px; margin-top: 20px;
-    }
-
-    /* تكبير الصور لتكون واضحة جداً */
-    .stImage img {
-        border-radius: 20px; width: 100% !important; max-height: 550px !important; object-fit: cover;
+        background: white; padding: 25px; border-radius: 35px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.05); margin-bottom: 30px;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# قائمة البدائل الذكية (خيار، لحم، تمن، إلخ)
-smart_alts = {
-    "خيار": "مخلل أو لهانة مفرومة", "لحم": "دجاج أو فطر متبل", "تمن": "برغل",
-    "طماطم": "معجون مخفف", "بصل": "بصل أخضر", "زيت": "زبدة",
-    "هيل": "دارسين", "ليمون": "نارنج أو خل", "حليب": "زبادي"
+# نظام النصائح والبدائل الذكي (بديل + نصيحة للطعم)
+smart_tips = {
+    "خيار": "ما عندج خيار؟ استعملي لهانة مفرومة ناعم أو مخلل، راح تنطيج نفس القرمشة والحموضة المطلوبة 🥗",
+    "لحم": "إذا اللحم ما متوفر، الفطر المتبل بالبهارات ينطي طعم قريب ويخلي الأكلة خفيفة وصحية 🍄",
+    "تمن": "البديل الأمثل هو البرغل، يشبع أكثر وينطي نكهة تراثية تجنن للأكلة 🌾",
+    "طماطم": "المعجون ويه رشة شكر صغيرة يعوض طعم الطماطم الفريش ويعدل الحموضة 🍅",
+    "بصل": "الكراث أو الثوم المهروس ينطون نفس النكهة القوية، بس قللي الكمية شوية 🧅",
+    "زيت": "الزبدة راح تنطي دسامة وطعم أطيب بهواية من الزيت العادي 🧈",
+    "ليمون": "النارنج أو ملح الليمون (المندوزي) ينطي حموضة أقوى، ديري بالج لا تكثرين 🍋"
 }
 
 if 'page' not in st.session_state: st.session_state.page = 'home'
@@ -70,56 +67,52 @@ try:
         recipes = json.load(f)
 except: recipes = []
 
-# --- الصفحة الرئيسية ---
+# --- الصفحة الرئيسية بتوزيع متناسق ---
 if st.session_state.page == 'home':
     st.markdown('<div class="main-title">🎀 مطبخ مريوم 🎀</div>', unsafe_allow_html=True)
     
-    # توزيع الأزرار بالنص (2 يمين و 2 يسار)
-    col_r, spacer, col_l = st.columns([2, 0.4, 2])
-    with col_r:
-        if st.button("🍱 أطباق رئيسية"):
-            st.session_state.category, st.session_state.page = "اطباق رئيسية", 'filter'
-            st.rerun()
-        if st.button("🥗 مقبلات"):
-            st.session_state.category, st.session_state.page = "مقبلات", 'filter'
-            st.rerun()
-    with col_l:
-        if st.button("🍰 حلويات"):
-            st.session_state.category, st.session_state.page = "حلويات", 'filter'
-            st.rerun()
-        if st.button("🥦 خضروات"):
-            st.session_state.category, st.session_state.page = "خضروات", 'filter'
-            st.rerun()
+    # توزيع الأزرار بشكل 2x2 متقارب في المنتصف
+    _, center_col, _ = st.columns([1, 2, 1])
+    with center_col:
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("🍱 أطباق رئيسية"):
+                st.session_state.category, st.session_state.page = "اطباق رئيسية", 'filter'
+                st.rerun()
+            if st.button("🥗 مقبلات"):
+                st.session_state.category, st.session_state.page = "مقبلات", 'filter'
+                st.rerun()
+        with col2:
+            if st.button("🍰 حلويات"):
+                st.session_state.category, st.session_state.page = "حلويات", 'filter'
+                st.rerun()
+            if st.button("🥦 خضروات"):
+                st.session_state.category, st.session_state.page = "خضروات", 'filter'
+                st.rerun()
 
-# --- صفحة الفلترة والنتائج ---
+# --- صفحة النتائج مع النصائح ---
 elif st.session_state.page == 'filter':
-    if st.button("⬅️"):
+    if st.button("⬅️ الرجوع"):
         st.session_state.page = 'home'
         st.rerun()
     
-    st.markdown(f"<h1 style='text-align:center; color:#4682b4; font-size:45px;'>شنو متوفر عندج؟</h1>", unsafe_allow_html=True)
+    st.markdown(f"<h2 style='text-align:center; color:#be185d;'>شنو متوفر بمطبخج للـ {st.session_state.category}؟</h2>", unsafe_allow_html=True)
     
     cat_recipes = [r for r in recipes if r['category'] == st.session_state.category]
     all_ing = sorted(list(set([i for r in cat_recipes for i in r['ingredients']])))
-    user_ing = st.multiselect("اختاري المواد:", all_ing)
+    user_ing = st.multiselect("اختاري المكونات اللي عندج:", all_ing)
     
     if st.button("اكتشفي الأكلات ✨"):
-        found = False
         for res in cat_recipes:
             missing = [m for m in res['ingredients'] if m not in user_ing]
             if len(missing) <= 1:
-                found = True
                 st.markdown('<div class="recipe-card">', unsafe_allow_html=True)
-                st.markdown(f'<div class="recipe-title">{res["name"]}</div>', unsafe_allow_html=True)
-                
-                # عرض الصورة بشكل ضخم وواضح
+                st.markdown(f'<h1 style="color:#db2777; text-align:center;">{res["name"]}</h1>', unsafe_allow_html=True)
                 st.image(res['image'], use_container_width=True)
                 
                 if len(missing) == 1:
-                    alt_fix = smart_alts.get(missing[0], "مكون بديل")
-                    st.markdown(f'<div class="suggestion-box">💡 ناقصج {missing[0]}؟ البديل: {alt_fix}</div>', unsafe_allow_html=True)
+                    tip = smart_tips.get(missing[0], f"ناقصج {missing[0]}؟ لا تهتمين، تكدرين تستبدليه بأي شي قريب عليه من المطبخ ويبقى الطعم طيب!")
+                    st.markdown(f'<div class="advice-box">💡 <b>نصيحة مريوم:</b><br>{tip}</div>', unsafe_allow_html=True)
                 
-                st.markdown(f'<div style="font-size:24px; color:#333; margin-top:15px;"><b>📖 الطريقة:</b><br>{res["recipe"]}</div>', unsafe_allow_html=True)
+                st.markdown(f'<div style="font-size:20px;"><b>👩‍🍳 طريقة التحضير:</b><br>{res["recipe"]}</div>', unsafe_allow_html=True)
                 st.markdown('</div>', unsafe_allow_html=True)
-        if not found:
-            st.warning("اختاري مواد أكثر حتى تطلعلج أكلات!")
