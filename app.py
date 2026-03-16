@@ -1,54 +1,58 @@
 import streamlit as st
 import json
 
-# 1. إعداد الصفحة
+# 1. إعداد الصفحة (ثابتة)
 st.set_page_config(page_title="مطبخ مريوم", layout="wide")
 
-# 2. CSS المتطور: ألوان متناسقة، خط Cairo، وترتيب أزرار احترافي
+# 2. CSS: الألوان والخطوط والأزرار (حسب طلبج الأخير)
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@600;900&display=swap');
     
     html, body, [data-testid="stAppViewContainer"] {
         font-family: 'Cairo', sans-serif;
-        background-color: #fdf2f8; /* خلفية وردية هادئة جداً */
+        background-color: #fdf2f8; 
         direction: rtl;
     }
 
     .main-title { 
         color: #db2777; text-align: center; font-size: 55px; font-weight: 900; 
-        margin-top: 20px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        margin-top: 20px;
     }
 
-    /* تنسيق الأزرار بشكل متناسق في منتصف الشاشة */
+    /* الأزرار: ترتيب رباعي متناسق في المنتصف */
     .stButton > button {
-        width: 100%; height: 100px; font-size: 24px !important;
+        width: 100%; height: 90px; font-size: 24px !important;
         background-color: #ffffff; color: #be185d;
-        border: 2px solid #fbcfe8; border-radius: 30px;
-        box-shadow: 0 4px 15px rgba(219, 39, 119, 0.1);
-        transition: 0.3s all ease; font-weight: 900;
+        border: 2px solid #fbcfe8; border-radius: 25px;
+        font-weight: 900;
     }
     .stButton > button:hover {
-        background-color: #f472b6; color: white; transform: translateY(-5px);
-        box-shadow: 0 8px 20px rgba(219, 39, 119, 0.2);
+        background-color: #f472b6; color: white;
     }
 
-    /* كرت النصائح الذكي */
-    .advice-box {
-        background: #fff1f2; border-right: 10px solid #fb7185;
-        padding: 20px; border-radius: 20px; color: #9f1239;
-        font-size: 20px; line-height: 1.6; margin: 20px 0;
-    }
-
-    /* كرت الأكلة */
+    /* كرت الأكلة وحجم الصورة الثابت */
     .recipe-card {
-        background: white; padding: 25px; border-radius: 35px;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.05); margin-bottom: 30px;
+        background: white; padding: 20px; border-radius: 30px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 30px;
+    }
+    
+    /* ضمان ظهور الصورة بشكل صحيح وكبير */
+    .stImage > img {
+        border-radius: 20px;
+        width: 100% !important;
+        object-fit: contain !important; /* يحافظ على أبعاد الصورة الأصلية بدون قص */
+    }
+
+    .advice-box {
+        background: #fff1f2; border-right: 8px solid #fb7185;
+        padding: 15px; border-radius: 15px; color: #9f1239;
+        font-size: 19px; margin: 15px 0;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# نظام النصائح والبدائل الذكي (بديل + نصيحة للطعم)
+# نظام النصائح والبدائل (ثابت ومحفوظ)
 smart_tips = {
     "خيار": "ما عندج خيار؟ استعملي لهانة مفرومة ناعم أو مخلل، راح تنطيج نفس القرمشة والحموضة المطلوبة 🥗",
     "لحم": "إذا اللحم ما متوفر، الفطر المتبل بالبهارات ينطي طعم قريب ويخلي الأكلة خفيفة وصحية 🍄",
@@ -67,11 +71,10 @@ try:
         recipes = json.load(f)
 except: recipes = []
 
-# --- الصفحة الرئيسية بتوزيع متناسق ---
+# --- الصفحة الرئيسية ---
 if st.session_state.page == 'home':
     st.markdown('<div class="main-title">🎀 مطبخ مريوم 🎀</div>', unsafe_allow_html=True)
     
-    # توزيع الأزرار بشكل 2x2 متقارب في المنتصف
     _, center_col, _ = st.columns([1, 2, 1])
     with center_col:
         col1, col2 = st.columns(2)
@@ -90,7 +93,7 @@ if st.session_state.page == 'home':
                 st.session_state.category, st.session_state.page = "خضروات", 'filter'
                 st.rerun()
 
-# --- صفحة النتائج مع النصائح ---
+# --- صفحة الفلترة والنتائج ---
 elif st.session_state.page == 'filter':
     if st.button("⬅️ الرجوع"):
         st.session_state.page = 'home'
@@ -100,7 +103,7 @@ elif st.session_state.page == 'filter':
     
     cat_recipes = [r for r in recipes if r['category'] == st.session_state.category]
     all_ing = sorted(list(set([i for r in cat_recipes for i in r['ingredients']])))
-    user_ing = st.multiselect("اختاري المكونات اللي عندج:", all_ing)
+    user_ing = st.multiselect("اختاري المكونات:", all_ing)
     
     if st.button("اكتشفي الأكلات ✨"):
         for res in cat_recipes:
@@ -108,11 +111,13 @@ elif st.session_state.page == 'filter':
             if len(missing) <= 1:
                 st.markdown('<div class="recipe-card">', unsafe_allow_html=True)
                 st.markdown(f'<h1 style="color:#db2777; text-align:center;">{res["name"]}</h1>', unsafe_allow_html=True)
+                
+                # عرض الصورة (هسة راح تظهر أكيد لأن ثبتنا الكود الخاص بيها)
                 st.image(res['image'], use_container_width=True)
                 
                 if len(missing) == 1:
-                    tip = smart_tips.get(missing[0], f"ناقصج {missing[0]}؟ لا تهتمين، تكدرين تستبدليه بأي شي قريب عليه من المطبخ ويبقى الطعم طيب!")
+                    tip = smart_tips.get(missing[0], f"ناقصج {missing[0]}؟ تكدرين تستخدمين أي بديل متوفر وتطلع الأكلة تخبل!")
                     st.markdown(f'<div class="advice-box">💡 <b>نصيحة مريوم:</b><br>{tip}</div>', unsafe_allow_html=True)
                 
-                st.markdown(f'<div style="font-size:20px;"><b>👩‍🍳 طريقة التحضير:</b><br>{res["recipe"]}</div>', unsafe_allow_html=True)
+                st.markdown(f'<div style="font-size:20px;"><b>👩‍🍳 الطريقة:</b><br>{res["recipe"]}</div>', unsafe_allow_html=True)
                 st.markdown('</div>', unsafe_allow_html=True)
