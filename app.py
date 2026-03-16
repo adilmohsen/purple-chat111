@@ -1,52 +1,57 @@
 import streamlit as st
 import json
-import os
 
-# إعدادات الصفحة
-st.set_page_config(page_title="مخطط الوجبات الذكي", page_icon="🍲", layout="centered")
+# 1. إعدادات الصفحة الأساسية
+st.set_page_config(page_title="مطبخ مريوم الذكي", page_icon="🍲", layout="centered")
 
-# تنسيق CSS لجعل الكلام من اليمين لليسار (للغة العربية) ولون خلفية أنيق
-st.markdown("""
-    <style>
-    .stApp { text-align: right; direction: rtl; }
-    div[data-baseweb="select"] { direction: rtl; }
-    </style>
-    """, unsafe_allow_html=True)
+# 2. إضافة الخلفية الخشبية وتنسيق الأزرار والخطوط
+# ملاحظة: استبدلي الرابط برابط صورتج المباشر من GitHub إذا مطلع عندج
+page_bg_img = f"""
+<style>
+[data-testid="stAppViewContainer"] {{
+    background-image: url("https://raw.githubusercontent.com/adilmohsen/purple-chat111/main/454fa9d2e598bae3df9c21c1ccf14889.jpg");
+    background-size: cover;
+    background-attachment: fixed;
+}}
 
-st.title("👨‍🍳 مخطط الوجبات الذكي")
-st.subheader("مريوم، شنو عندج مكونات بالثلاجة؟")
+/* تنسيق الكلام ليكون عربي ومن اليمين */
+.main {{
+    text-align: right;
+    direction: rtl;
+    color: white;
+}}
 
-# التأكد من وجود ملف البيانات أو إنشاء بيانات تجريبية إذا نقص
-if not os.path.exists('recipes.json'):
-    default_recipes = [
-        {"name": "مخلمة بيض وطماطم", "ingredients": ["بيض", "طماطم", "بصل"], "cost": "رخيص"},
-        {"name": "مجدرة رز وعدس", "ingredients": ["رز", "عدس", "بصل"], "cost": "رخيص"},
-        {"name": "معكرونة بالصلصة", "ingredients": ["معكرونة", "طماطم", "ثوم"], "cost": "رخيص"}
-    ]
-    with open('recipes.json', 'w', encoding='utf-8') as f:
-        json.dump(default_recipes, f, ensure_ascii=False)
+/* تنسيق الأزرار الكبيرة */
+div.stButton > button {{
+    width: 100%;
+    height: 100px;
+    font-size: 28px !important;
+    font-weight: bold;
+    border-radius: 20px;
+    margin-bottom: 15px;
+    background-color: rgba(230, 126, 34, 0.9); /* لون برتقالي دافئ */
+    color: white;
+    border: 2px solid #fff;
+    transition: 0.3s;
+}}
 
-# تحميل البيانات
-with open('recipes.json', 'r', encoding='utf-8') as f:
-    recipes = json.load(f)
+div.stButton > button:hover {{
+    background-color: rgba(211, 84, 0, 1);
+    transform: scale(1.02);
+}}
 
-# استخراج قائمة المكونات
-all_ing = sorted(list(set([ing for res in recipes for ing in res['ingredients']])))
+/* حاوية الأكلات */
+.recipe-box {{
+    background-color: rgba(0, 0, 0, 0.75);
+    padding: 25px;
+    border-radius: 20px;
+    border: 1px solid #f39c12;
+    margin-top: 20px;
+    color: white;
+}}
+</style>
+"""
+st.markdown(page_bg_img, unsafe_allow_html=True)
 
-# واجهة الاختيار
-selected_items = st.multiselect("اختاري المكونات المتوفرة حالياً:", all_ing)
-
-if st.button("اكتشفي الأكلات الممكنة"):
-    if selected_items:
-        results = [r for r in recipes if all(item in selected_items for item in r['ingredients'])]
-        
-        if results:
-            st.success(f"لقينا لج {len(results)} وجبات تكدرين تسويها!")
-            for res in results:
-                with st.expander(f"🍴 {res['name']}"):
-                    st.write(f"✅ **المكونات:** {', '.join(res['ingredients'])}")
-                    st.write(f"💰 **التكلفة التقديرية:** {res['cost']}")
-        else:
-            st.warning("ماكو وجبة مطابقة تماماً، جربي تضيفين مكونات أكثر.")
-    else:
-        st.info("حطي المكونات أولاً مريوم.")
+# 3. عنوان الموقع
+st.markdown('<h1 style="text-align: center; color: #f39c12
